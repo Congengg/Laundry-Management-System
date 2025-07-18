@@ -12,6 +12,8 @@ The laundry app has the potential to disrupt the current market by offering conv
 System Architecture
 
 High-Level Diagram: A visual representation (e.g., a block diagram) showing how all components interact: the two frontend apps, the backend server, the database, and any external services. This provides a clear overview of the distributed system.
+
+
 +-------------------+      +---------------------+      +---------------------+
 | Frontend App 1    | <--> | Backend Application | <--> | MySQL Database      |
 | (Customer App)    |      | (PHP with Laravel)   |      |                     |
