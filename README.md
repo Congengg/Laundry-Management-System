@@ -3,7 +3,7 @@ DAD MINI PROJECT
 
 Introduction
 
-The Laundry Service System is an online platform built to make it easier for people to manage their laundry. Instead of calling or visiting a laundry shop, customers can simply log in, choose a laundry package, place an order, make a payment, and check their order status, all from one website. The system is designed to make the laundry process more convenient, especially for people with busy schedules.
+The Laundry Management System is an online platform built to make it easier for people to manage their laundry. Instead of calling or visiting a laundry shop, customers can simply log in, choose a laundry package, place an order, make a payment, and check their order status, all from one website. The system is designed to make the laundry process more convenient, especially for people with busy schedules.
 
 What makes this system special is how everything works smoothly in real time. When a customer places an order, they are immediately shown their updated order list. The system also allows them to choose from different payment methods, such as online banking, credit card, or even cash on delivery. This helps make the whole experience easier and more flexible for the customer.
 
