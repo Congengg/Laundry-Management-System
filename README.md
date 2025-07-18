@@ -48,11 +48,8 @@ API Integration: Explain how the frontend communicates with the backend API.
 
 Database Design
 
-Entity-Relationship Diagram (ERD): A diagram showing the database tables, their columns (with data types), and the relationships between them (one-to-one, one-to-many).
+Entity-Relationship Diagram (ERD):
 
-Schema Justification: Briefly explain why the database was designed this way, highlighting key tables and relationships.
-
-Business Logic and Data Validation
 
 Use Case Diagrams/Flowcharts: Illustrate the main user flows, such as "selecting a book," "borrowing a book," and "returning a book." This visually demonstrates the business logic.
 
