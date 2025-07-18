@@ -22,6 +22,9 @@ System Architecture
 
 High-Level Diagram: A visual representation (e.g., a block diagram) showing how all components interact: the two frontend apps, the backend server, the database, and any external services. This provides a clear overview of the distributed system.
 
+![HLD](https://github.com/user-attachments/assets/a9ab18d9-e789-41af-9a1a-00685e4279fc)
+
+
 Backend Application
 
 Technology Stack: List the programming language, framework (e.g., Node.js with Express, Python with Django), and other key libraries used.
@@ -43,11 +46,22 @@ Frontend Applications
 
 For each of the two frontend apps:
 
-Purpose: Describe the app's function and target user (e.g., one app for customers, one for administrators).
+Customer App
 
-Technology Stack: List the frameworks and libraries used (e.g., React, Angular, Vue.js, Swift, Kotlin).
+Purpose: This app allows customers to place orders, track their laundry, and view order statuses.
 
-API Integration: Explain how the frontend communicates with the backend API.
+Technology Stack: React, Axios for API requests.
+
+API Integration: Communicates with the backend via REST API, using JWT tokens for authentication.
+
+
+Courier App
+
+Purpose: This app is designed for couriers to manage their assigned orders, update statuses, and track completed deliveries.
+
+Technology Stack: React Native (for mobile), Axios for API requests.
+
+API Integration: Similar to the customer app, the courier app uses REST APIs to interact with the backend for real-time updates on order assignments and deliveries.
 
 
 
@@ -64,7 +78,7 @@ The database schema for the laundry service system is designed to efficiently tr
 
 
 
-Use Case Diagrams/Flowcharts: Illustrate the main user flows, such as "selecting a book," "borrowing a book," and "returning a book." This visually demonstrates the business logic.
+Use Case Diagrams/Flowcharts: 
 
 Place Order Flowchart:
 
@@ -74,4 +88,12 @@ Track Order Flowchart:
 
 ![Order](https://github.com/user-attachments/assets/fcf680e1-cb26-4aba-8f86-1c8b12edafc3)
 
-Data Validation: Describe the validation rules implemented on both the frontend (e.g., checking for empty fields) and backend (e.g., ensuring an email is unique).
+Place Order Flowchart: Describes the steps a customer takes to select a package, input pickup details, confirm the order, and finish the process.
+
+Track Order Flowchart: Describes the steps for checking and updating the order status, with the ability for both the customer and the courier to track the order.
+
+Data Validation: 
+
+Frontend Validation: Ensures all required fields are filled before submitting.
+
+Backend Validation: Ensures no duplicate orders and verifies customer existence.
