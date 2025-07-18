@@ -1,5 +1,6 @@
 # Laundry-Management-System
 DAD MINI PROJECT
+
 Introduction
 
 Project Overview: A brief description of the project, its purpose, and the problem it solves.
