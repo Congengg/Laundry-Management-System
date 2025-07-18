@@ -31,15 +31,196 @@ Technology Stack: List the programming language, framework (e.g., Node.js with E
 
 API Documentation: This is the most critical part. It should include:
 
-(1) A list of all API endpoints (e.g., /api/books, /api/users/login).
+1. GET /api/customers
+Method: GET
 
-(2) The HTTP method for each endpoint (GET, POST, PUT, DELETE).
+Description: Fetch customer details.
 
-(3) Required request parameters, headers, and body formats (with JSON examples).
+Request Parameters:
 
-(4) Example success and error responses (with status codes and JSON examples).
+Headers:
 
-(5) Security: Detail the security measures implemented. Explain the choice of mechanism (e.g., JWT, OAuth 2.0, API Keys) and describe how it protects the endpoints.
+Authorization: Bearer <JWT>
+
+Query Parameters:
+
+customer_id (optional): The ID of the customer whose details you wish to fetch.
+
+Response Example:
+
+{
+  "customer_id": 1,
+  "username": "customer1",
+  "phone": "01236784120",
+  "created_at": "2025-07-11T05:34:09"
+}
+Error Response Example (Unauthorized):
+
+
+{
+  "error": "Unauthorized"
+}
+Status Code:
+
+200 OK for successful retrieval.
+
+401 Unauthorized if the JWT is invalid or expired.
+
+2. POST /api/orders
+Method: POST
+
+Description: Place a new laundry order.
+
+Request Parameters:
+
+Body (JSON):
+
+
+{
+  "customer_id": 1,
+  "pickup_address": "123 Street, City",
+  "pickup_time": "2025-07-18T16:00:00",
+  "package_id": 1
+}
+Response Example:
+
+
+{
+  "order_id": 47,
+  "status": "pending",
+  "message": "Order placed successfully"
+}
+Error Response Example (Missing Fields):
+
+
+{
+  "error": "Missing required fields"
+}
+Status Code:
+
+201 Created for a successful order placement.
+
+400 Bad Request if required fields are missing.
+
+3. GET /api/orders/{order_id}
+Method: GET
+
+Description: Fetch details of a specific order.
+
+Request Parameters:
+
+Path Parameters:
+
+order_id: The ID of the order to retrieve.
+
+Headers:
+
+Authorization: Bearer <JWT>
+
+Response Example:
+
+
+{
+  "order_id": 47,
+  "customer_id": 1,
+  "pickup_address": "123 Street, City",
+  "pickup_time": "2025-07-18T16:00:00",
+  "status": "pending",
+  "package_id": 1,
+  "created_at": "2025-07-17T02:31:38"
+}
+Error Response Example (Order Not Found):
+
+
+{
+  "error": "Order not found"
+}
+Status Code:
+
+200 OK for successful retrieval.
+
+404 Not Found if the order doesn't exist.
+
+4. PUT /api/orders/{order_id}
+Method: PUT
+
+Description: Update the details or status of an existing order.
+
+Request Parameters:
+
+Path Parameters:
+
+order_id: The ID of the order to update.
+
+Body (JSON):
+
+
+{
+  "pickup_address": "456 New Street, City",
+  "status": "completed"
+}
+Response Example:
+
+
+{
+  "order_id": 47,
+  "status": "completed",
+  "message": "Order updated successfully"
+}
+Error Response Example (Invalid Status):
+
+
+{
+  "error": "Invalid status value"
+}
+Status Code:
+
+200 OK for successful update.
+
+400 Bad Request for invalid data (e.g., wrong status).
+
+5. POST /api/couriers
+Method: POST
+
+Description: Register a new courier.
+
+Request Parameters:
+
+Body (JSON):
+
+{
+  "username": "courier1",
+  "password": "password123",
+  "phone": "01964827589"
+}
+Response Example:
+
+
+{
+  "courier_id": 1,
+  "username": "courier1",
+  "phone": "01964827589",
+  "status": "available"
+}
+Error Response Example (Missing Fields):
+
+{
+  "error": "Username and phone are required"
+}
+Status Code:
+
+201 Created for successful registration.
+
+400 Bad Request if required fields are missing.
+
+Security
+JWT (JSON Web Tokens):
+
+JWT is used for authentication across the API. It is required for accessing most of the endpoints, such as GET /api/customers, GET /api/orders/{order_id}, and PUT /api/orders/{order_id}.
+
+How it works: When a user logs in (using username and password), the system generates a JWT that is returned to the client. For subsequent API requests, the client must include this token in the Authorization header as Bearer <JWT>.
+
+Protection: JWT helps protect sensitive data by ensuring that only authenticated users can access certain resources. The tokens are signed, ensuring the integrity of the data, and can be expired after a set duration to enhance security.
 
 
 Frontend Applications
