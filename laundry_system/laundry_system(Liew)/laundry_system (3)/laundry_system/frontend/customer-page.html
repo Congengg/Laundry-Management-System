@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Laundry Services</title>
+  <link rel="stylesheet" href="../css/customer.css" />
+</head>
+<body>
+  <script>
+    // 🔐 Early access protection
+    const customerId = localStorage.getItem('customer_id');
+    if (!customerId) {
+      alert("❌ Please login first.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <header class="header">
+    <div class="logo-section">
+      <div class="logo">🧺</div>
+      <h1 class="title">Laundry Services</h1>
+    </div>
+    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+  </header>
+
+  <div class="container">
+    <div id="customer-app" class="app-container">
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="showTab('packages', this)">Browse Packages</button>
+        <button class="tab-btn" onclick="showTab('order', this)">Place Order</button>
+        <button class="tab-btn" onclick="showTab('payment', this)">Payment</button>
+        <button class="tab-btn" onclick="showTab('my-orders', this)">My Orders</button>
+      </div>
+
+      <!-- Packages Tab -->
+      <div id="packages" class="tab-content active">
+        <h3>Available Laundry Packages</h3>
+        <div id="packages-grid" class="packages-grid"></div>
+      </div>
+
+      <!-- Order Tab -->
+      <div id="order" class="tab-content">
+        <h3>Place New Order</h3>
+        <form id="order-form">
+          <div class="form-group">
+            <label>Select Package:</label>
+            <select id="package-select" required></select>
+          </div>
+          <div class="form-group">
+            <label>Customer Name:</label>
+            <input type="text" id="customer-name" required />
+          </div>
+          <div class="form-group">
+            <label>Phone Number:</label>
+            <input type="tel" id="customer-phone" required />
+          </div>
+          <div class="form-group">
+            <label>Pickup Address:</label>
+            <textarea id="pickup-address" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Preferred Pickup Time:</label>
+            <input type="datetime-local" id="pickup-time" required />
+          </div>
+          <div class="form-group">
+            <label>Remarks:</label>
+            <textarea id="special-instructions" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn-primary">Place Order</button>
+        </form>
+        <div id="order-message" class="hidden"></div>
+      </div>
+
+      <!-- Payment Tab -->
+      <div id="payment" class="tab-content">
+        <h3>Payment Methods</h3>
+        <form id="payment-form">
+          <div class="form-group">
+            <label for="payment-method">Choose a Payment Method:</label>
+            <select id="payment-method" required>
+              <option value="">-- Select a method --</option>
+              <option value="Credit/Debit Card">💳 Credit/Debit Card</option>
+              <option value="Digital Wallet">📱 Digital Wallet</option>
+              <option value="Cash on Delivery">💰 Cash on Delivery</option>
+              <option value="Bank Transfer">🏦 Bank Transfer</option>
+            </select>
+          </div>
+          <div id="payment-info" class="payment-info"></div>
+          <button type="submit" class="btn-primary">Confirm Payment</button>
+          <div id="payment-message" class="hidden"></div>
+        </form>
+      </div>
+
+      <!-- Orders Tab -->
+      <div id="my-orders" class="tab-content">
+        <h3>My Orders</h3>
+        <div class="search-box">
+          <input type="text" id="order-search" placeholder="Search by order ID or phone number"/>
+          <button onclick="searchOrders()" class="btn-secondary">Search</button>
+        </div>
+        <div id="customer-orders-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('customer_id');
+        alert('Logging out...');
+        window.location.href = 'login.html';
+      }
+    }
+
+    function showTab(tabName, tabButton) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      tabButton.classList.add('active');
+    }
+
+    async function loadPackages() {
+      try {
+        const res = await fetch('http://localhost/laundry_system/backend/get-package.php');
+        const packages = await res.json();
+        const select = document.getElementById('package-select');
+        const grid = document.getElementById('packages-grid');
+
+        select.innerHTML = '<option value="">Choose a package...</option>';
+        grid.innerHTML = "";
+
+        packages.forEach(pkg => {
+          const card = document.createElement('div');
+          card.className = 'package-card';
+          card.innerHTML = `
+            <h4>${pkg.package_name}</h4>
+            <div class="package-price">RM ${parseFloat(pkg.price).toFixed(2)}</div>
+            <p>${pkg.description}</p>
+          `;
+          card.onclick = () => {
+            select.value = pkg.package_id;
+            showTab('order', document.querySelector('.tab-btn:nth-child(2)'));
+          };
+          grid.appendChild(card);
+
+          const option = document.createElement('option');
+          option.value = pkg.package_id;
+          option.textContent = `${pkg.package_name} - RM ${parseFloat(pkg.price).toFixed(2)}`;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Package load error:", err);
+      }
+    }
+
+    async function loadCustomerOrders() {
+      const customerId = localStorage.getItem('customer_id');
+      try {
+        const res = await fetch('http://localhost/laundry_system/backend/get-orders.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customer_id: customerId })
+        });
+        const orders = await res.json();
+        displayOrders(orders);
+      } catch (err) {
+        console.error("Order load error:", err);
+      }
+    }
+
+    function displayOrders(orders) {
+      const container = document.getElementById('customer-orders-list');
+      container.innerHTML = "";
+
+      if (orders.length === 0) {
+        container.innerHTML = "<p>No orders found.</p>";
+        return;
+      }
+
+      orders.forEach(order => {
+        const card = document.createElement('div');
+        card.className = "order-card";
+        card.innerHTML = `
+          <h4>Order #${order.order_id}</h4>
+          <p><strong>Package:</strong> ${order.package_name}</p>
+          <p><strong>Status:</strong> <span class="order-status status-${order.status.toLowerCase()}">${order.status}</span></p>
+          <p><strong>Pickup:</strong> ${order.pickup_time}</p>
+          <p><strong>Total:</strong> RM ${parseFloat(order.price).toFixed(2)}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function searchOrders() {
+      const customerId = localStorage.getItem('customer_id');
+      const query = document.getElementById('order-search').value.trim();
+      try {
+        const res = await fetch('http://localhost/laundry_system/backend/get-orders.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customer_id: customerId, search: query })
+        });
+        const orders = await res.json();
+        displayOrders(orders);
+      } catch (err) {
+        console.error("Search error:", err);
+      }
+    }
+
+    document.getElementById('order-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const customerId = localStorage.getItem('customer_id');
+      const data = {
+        customer_id: customerId,
+        package_id: document.getElementById('package-select').value,
+        customer_name: document.getElementById('customer-name').value,
+        customer_phone: document.getElementById('customer-phone').value,
+        pickup_address: document.getElementById('pickup-address').value,
+        pickup_time: document.getElementById('pickup-time').value,
+        special_instructions: document.getElementById('special-instructions').value
+      };
+
+      try {
+        const res = await fetch('http://localhost/laundry_system/backend/place-order.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        const msg = document.getElementById('order-message');
+        if (result.success) {
+          msg.classList.remove('hidden');
+          msg.textContent = "✅ Order placed!";
+          document.getElementById('order-form').reset();
+          loadCustomerOrders();
+          showTab('payment', document.querySelector('.tab-btn:nth-child(3)'));
+        } else {
+          msg.classList.remove('hidden');
+          msg.textContent = "❌ Order failed: " + result.message;
+        }
+      } catch (err) {
+        alert("❌ Error placing order.");
+        console.error(err);
+      }
+    });
+
+    document.getElementById('payment-method').addEventListener('change', function () {
+      const method = this.value;
+      const info = document.getElementById('payment-info');
+      info.textContent = {
+        "Credit/Debit Card": "We accept Visa and MasterCard.",
+        "Digital Wallet": "Supports TouchNGo, Boost, GrabPay.",
+        "Cash on Delivery": "Pay when laundry is delivered.",
+        "Bank Transfer": "Maybank 1234567890 - use Order ID as reference."
+      }[method] || "";
+    });
+
+    document.getElementById('payment-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const method = document.getElementById('payment-method').value;
+      const customerId = localStorage.getItem('customer_id');
+      const msg = document.getElementById('payment-message');
+
+      if (!method) {
+        msg.classList.remove('hidden');
+        msg.textContent = "❌ Please select a payment method.";
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost/laundry_system/backend/save-payment.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customer_id: customerId, payment_method: method })
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          msg.classList.remove('hidden');
+          msg.textContent = `✅ Payment confirmed via ${method}.`;
+          document.getElementById('payment-form').reset();
+          document.getElementById('order-form').reset();
+          showTab('packages', document.querySelector('.tab-btn:nth-child(1)'));
+        } else {
+          msg.classList.remove('hidden');
+          msg.textContent = "❌ Payment failed: " + result.message;
+        }
+      } catch (err) {
+        console.error("Payment error:", err);
+        msg.classList.remove('hidden');
+        msg.textContent = "❌ Server error during payment.";
+      }
+    });
+
+    window.onload = function () {
+      const customerId = localStorage.getItem('customer_id');
+      if (!customerId) {
+        alert("❌ Please login first.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      loadPackages();
+      loadCustomerOrders();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laundry Service System</title>
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>🧺 Laundry Service System</h1>
+                <div class="auth-section">
+                    <div id="user-info" class="user-info hidden">
+                        <span>👤</span>
+                        <span id="username-display"></span>
+                    </div>
+                    <button id="login-btn" class="login-btn" onclick="showLoginPage()">Login</button>
+                    <button id="logout-btn" class="logout-btn hidden" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Login Page -->
+        <div id="login-page" class="login-page active">
+            <div class="login-card">
+                <h2>Welcome!!</h2>
+                <div id="login-alert" class="alert-error hidden"></div>
+                <form id="login-form" method="post">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" required placeholder="Enter your username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" required placeholder="Enter your password">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-type">User Type:</label>
+                        <select id="user-type" name="user-type" required>
+                            <option value="" disabled selected>Select your user type</option>
+                            <option value="customer">Customer</option>
+                            <option value="courier">Courier</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Show login page (used after logout)
+        function showLoginPage() {
+            document.getElementById('login-page').classList.add('active');
+            document.getElementById('login-btn').classList.add('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+            document.getElementById('user-info').classList.add('hidden');
+        }
+
+        // Handle login
+        document.getElementById('login-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('user-type').value;
+
+            const userCredentials = {
+                username: username,
+                password: password,
+                user_type: userType
+            };
+
+            fetch('http://localhost/laundry_system/backend/login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userCredentials)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                if (data.status === 'success') {
+                    alert("Login successful! Welcome, " + data.username);
+
+                    // Store customer ID for future use
+                    if (data.user_type === 'customer') {
+                        localStorage.setItem('customer_id', data.customer_id);  // ✅ Save for customer-page.html
+                    }
+
+                    document.getElementById('username-display').textContent = data.username;
+                    document.getElementById('user-info').classList.remove('hidden');
+                    document.getElementById('login-page').classList.remove('active');
+
+                    if (data.user_type === 'customer') {
+                        window.location.href = "customer-page.html";
+                    } else if (data.user_type === 'courier') {
+                        window.location.href = "courier-page.html";
+                    }
+                } else {
+                    alert("Fail to Login, " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("Network error. Please try again later.");
+            });
+        });
+
+        // Handle logout
+        window.logout = function () {
+            document.getElementById('login-btn').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('user-info').classList.add('hidden');
+            document.getElementById('login-page').classList.add('active');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            localStorage.removeItem('customer_id'); // ✅ Clear stored customer ID
+        };
+    });
+    </script>
+</body>
+</html>

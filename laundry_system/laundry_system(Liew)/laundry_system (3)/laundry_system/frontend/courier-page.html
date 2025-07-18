@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Courier Dashboard - Laundry Services</title>
+    <link rel="stylesheet" href="/css/courier.css" />
+    <style>
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            transition: all 0.4s ease;
+            opacity: 1;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .fade-out {
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        // 🔐 Block access if not logged in
+        const courierId = localStorage.getItem('courier_id');
+        if (!courierId) {
+            alert("❌ Access denied. Please login as a courier.");
+            window.location.href = "login.html";
+        }
+    </script>
+
+    <header class="header">
+        <div class="logo-section">
+            <div class="logo">🧺</div>
+            <h1 class="title">Laundry Services - Courier</h1>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </header>
+
+    <div class="container">
+        <div id="courier-app" class="app-container">
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="showTab('view-tasks', this)">View Tasks</button>
+                <button class="tab-btn" onclick="showTab('delivered', this)">Delivered</button>
+            </div>
+
+            <!-- View Tasks -->
+            <div id="view-tasks" class="tab-content active">
+                <h3>Current Tasks</h3>
+                <div class="search-box">
+                    <input type="text" id="task-search" placeholder="Search tasks..." />
+                    <button class="btn-secondary" onclick="searchTasks()">Search</button>
+                </div>
+                <div id="tasks-list"></div>
+            </div>
+
+            <!-- Delivered -->
+            <div id="delivered" class="tab-content">
+                <h3>Delivered Orders</h3>
+                <div class="search-box">
+                    <input type="text" id="delivered-search" placeholder="Search delivered..." />
+                    <button class="btn-secondary" onclick="searchDelivered()">Search</button>
+                </div>
+                <div id="delivered-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName, button) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            button.classList.add('active');
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('courier_id');
+                alert('Logging out...');
+                window.location.href = 'login.html';
+            }
+        }
+
+        function showAlert(message, type = 'success') {
+            const existing = document.querySelector('.alert');
+            if (existing) existing.remove();
+
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+
+            const container = document.querySelector('.app-container');
+            container.insertBefore(alert, container.firstChild);
+
+            setTimeout(() => {
+                alert.classList.add('fade-out');
+                setTimeout(() => alert.remove(), 400);
+            }, 2500);
+        }
+
+        async function loadCourierOrders() {
+            try {
+                const response = await fetch('http://localhost/laundry_system/backend/get-courier-orders.php');
+                const orders = await response.json();
+
+                const taskContainer = document.getElementById('tasks-list');
+                const deliveredContainer = document.getElementById('delivered-list');
+                taskContainer.innerHTML = "";
+                deliveredContainer.innerHTML = "";
+
+                orders.forEach(order => {
+                    const card = document.createElement('div');
+                    card.className = "order-card";
+                    card.dataset.orderId = order.order_id;
+
+                    const html = `
+                        <h4>Order #${order.order_id}</h4>
+                        <p><strong>Package:</strong> ${order.package_name}</p>
+                        <p><strong>Pickup Date:</strong> ${order.created_at.split(' ')[0]}</p>
+                        <p><strong>Pickup Time:</strong> ${order.pickup_time}</p>
+                        <p><strong>Customer:</strong> ${order.customer_name}</p>
+                        <p><strong>Address:</strong> ${order.pickup_address}</p>
+                        <p><strong>Amount:</strong> RM ${parseFloat(order.price).toFixed(2)}</p>
+                        <p><strong>Status:</strong> <span class="order-status status-${order.status.toLowerCase()}">${order.status}</span></p>
+                    `;
+
+                    card.innerHTML = html;
+
+                    if (order.status.toLowerCase() === 'pending') {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-primary';
+                        btn.textContent = 'Mark as Picked Up';
+                        btn.onclick = () => updateStatus(order.order_id, 'processing');
+                        card.appendChild(btn);
+                        taskContainer.appendChild(card);
+                    } else if (order.status.toLowerCase() === 'processing') {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-primary';
+                        btn.textContent = 'Mark as Delivered';
+                        btn.onclick = () => updateStatus(order.order_id, 'delivered');
+                        card.appendChild(btn);
+                        taskContainer.appendChild(card);
+                    } else if (order.status.toLowerCase() === 'delivered') {
+                        deliveredContainer.appendChild(card);
+                    }
+                });
+            } catch (error) {
+                console.error("Load error:", error);
+                showAlert("❌ Failed to load orders", "error");
+            }
+        }
+
+        async function updateStatus(orderId, newStatus) {
+            const courierId = localStorage.getItem('courier_id');
+            try {
+                const response = await fetch('http://localhost/laundry_system/backend/task-status.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        new_status: newStatus,
+                        courier_id: courierId
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    showAlert(`✅ Order #${orderId} updated to "${newStatus}"`);
+                    loadCourierOrders();
+                } else {
+                    showAlert("❌ Update failed: " + result.message, 'error');
+                }
+            } catch (error) {
+                console.error("Update error:", error);
+                showAlert("❌ Network error while updating", "error");
+            }
+        }
+
+        function searchTasks() {
+            const term = document.getElementById('task-search').value.toLowerCase();
+            document.querySelectorAll('#tasks-list .order-card').forEach(card => {
+                card.style.display = card.textContent.toLowerCase().includes(term) ? 'block' : 'none';
+            });
+        }
+
+        function searchDelivered() {
+            const term = document.getElementById('delivered-search').value.toLowerCase();
+            document.querySelectorAll('#delivered-list .order-card').forEach(card => {
+                card.style.display = card.textContent.toLowerCase().includes(term) ? 'block' : 'none';
+            });
+        }
+
+        window.onload = loadCourierOrders;
+    </script>
+</body>
+</html>
