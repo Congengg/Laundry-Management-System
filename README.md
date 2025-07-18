@@ -3,9 +3,18 @@ DAD MINI PROJECT
 
 Introduction
 
-Project Overview: A brief description of the project, its purpose, and the problem it solves.
+The Laundry Service System is an online platform built to make it easier for people to manage their laundry. Instead of calling or visiting a laundry shop, customers can simply log in, choose a laundry package, place an order, make a payment, and check their order status, all from one website. The system is designed to make the laundry process more convenient, especially for people with busy schedules.
 
-Commercial Value / Third-Party Integration: Explain the project's potential in a real-world market OR detail the external APIs used (e.g., Google Maps, Firebase Authentication) and justify their integration.
+What makes this system special is how everything works smoothly in real time. When a customer places an order, they are immediately shown their updated order list. The system also allows them to choose from different payment methods, such as online banking, credit card, or even cash on delivery. This helps make the whole experience easier and more flexible for the customer.
+
+The platform also includes a simple but important security feature. It checks whether a customer is logged in before showing any content. If not, it automatically redirects them to the login page. This keeps the user’s information safe and ensures that only registered customers can access their orders.
+
+All the packages shown on the website are loaded from the server using background code. This means the page does not need to reload every time a change is made, which makes it faster and smoother to use. When customers submit their orders or view their past orders, the system communicates with the server behind the scenes to get or send the data. This is what makes the website feel modern and responsive.
+
+There is also a useful search feature in the “My Orders” section. Customers can look up their orders using an order ID or their phone number. This helps them easily find past orders without having to scroll through everything.
+
+Overall, the Laundry Service System helps both customers and laundry businesses. It saves time, reduces errors, and creates a better experience for everyone.
+
 
 System Architecture
 
