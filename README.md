@@ -16,6 +16,7 @@ There is also a useful search feature in the “My Orders” section. Customers 
 Overall, the Laundry Service System helps both customers and laundry businesses. It saves time, reduces errors, and creates a better experience for everyone.
 
 
+
 System Architecture
 
 High-Level Diagram: A visual representation (e.g., a block diagram) showing how all components interact: the two frontend apps, the backend server, the database, and any external services. This provides a clear overview of the distributed system.
@@ -36,6 +37,7 @@ API Documentation: This is the most critical part. It should include:
 
 (5) Security: Detail the security measures implemented. Explain the choice of mechanism (e.g., JWT, OAuth 2.0, API Keys) and describe how it protects the endpoints.
 
+
 Frontend Applications
 
 For each of the two frontend apps:
@@ -46,9 +48,16 @@ Technology Stack: List the frameworks and libraries used (e.g., React, Angular, 
 
 API Integration: Explain how the frontend communicates with the backend API.
 
+
+
 Database Design
 
 Entity-Relationship Diagram (ERD):
+
+![laundry database](https://github.com/user-attachments/assets/67de73f0-490b-48b7-be79-8420eb016c25)
+
+The database schema for the laundry service system is designed to efficiently track customer orders, payments, packages, and couriers. The customers table serves as the central entity, linking to the orders table, which tracks the details of each order, including the selected package and its status. Each order is linked to a payment record, ensuring that payment details are associated with specific orders. The packages table defines the available laundry services, while the couriers table manages the delivery personnel, with each order being assigned a courier for delivery. This one-to-many relationship structure ensures seamless tracking of customers, their orders, payments, and deliveries, streamlining the operational workflow of the laundry service.
+
 
 
 Use Case Diagrams/Flowcharts: Illustrate the main user flows, such as "selecting a book," "borrowing a book," and "returning a book." This visually demonstrates the business logic.
