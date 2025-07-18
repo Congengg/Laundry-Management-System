@@ -2,7 +2,7 @@
 # Laundry-Management-System
 DAD MINI PROJECT
 
-Introduction
+**Introduction**
 
 The Laundry Management System is an online platform built to make it easier for people to manage their laundry. Instead of calling or visiting a laundry shop, customers can simply log in, choose a laundry package, place an order, make a payment, and check their order status, all from one website. The system is designed to make the laundry process more convenient, especially for people with busy schedules.
 
@@ -18,18 +18,19 @@ Overall, the Laundry Service System helps both customers and laundry businesses.
 
 
 
-System Architecture
+
+**System Architecture**
 
 High-Level Diagram: A visual representation (e.g., a block diagram) showing how all components interact: the two frontend apps, the backend server, the database, and any external services. This provides a clear overview of the distributed system.
 
 ![HLD](https://github.com/user-attachments/assets/a9ab18d9-e789-41af-9a1a-00685e4279fc)
 
 
-Backend Application
+**Backend Application**
 
-Technology Stack: List the programming language, framework (e.g., Node.js with Express, Python with Django), and other key libraries used.
+Technology Stack: We are usinng html css for the frontend and for the backend we using php framework.
 
-API Documentation: This is the most critical part. It should include:
+API Documentation:
 
 1. GET /api/customers
     Method: GET
@@ -223,7 +224,9 @@ API Documentation: This is the most critical part. It should include:
     Protection: JWT helps protect sensitive data by ensuring that only authenticated users can access certain resources. The tokens are signed, ensuring the integrity of the data, and can be expired after a set duration to enhance security.
 
 
-Frontend Applications
+
+
+**Frontend Applications**
 
 For each of the two frontend apps:
 
@@ -246,7 +249,8 @@ API Integration: Similar to the customer app, the courier app uses REST APIs to 
 
 
 
-Database Design
+
+**Database Design**
 
 Entity-Relationship Diagram (ERD):
 
@@ -259,7 +263,7 @@ The database schema for the laundry service system is designed to efficiently tr
 
 
 
-Use Case Diagrams/Flowcharts: 
+**Use Case Diagrams/Flowcharts: **
 
 Place Order Flowchart:
 
