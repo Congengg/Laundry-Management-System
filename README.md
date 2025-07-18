@@ -191,7 +191,7 @@ API Documentation:
     
     {
       "username": "courier1",
-      "password": "password123",
+      "password": "cr1234",
       "phone": "01964827589"
     }
     Response Example:
