@@ -14,7 +14,7 @@ All the packages shown on the website are loaded from the server using backgroun
 
 There is also a useful search feature in the “My Orders” section. Customers can look up their orders using an order ID or their phone number. This helps them easily find past orders without having to scroll through everything.
 
-Overall, the Laundry Service System helps both customers and laundry businesses. It saves time, reduces errors, and creates a better experience for everyone.
+In summary, the Laundry Management System benefits both customers and laundry businesses by saving time, minimizing errors, and enhancing the overall user experience.
 
 
 
