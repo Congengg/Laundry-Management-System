@@ -1,3 +1,4 @@
+
 # Laundry-Management-System
 DAD MINI PROJECT
 
@@ -53,13 +54,19 @@ API Integration: Explain how the frontend communicates with the backend API.
 Database Design
 
 Entity-Relationship Diagram (ERD):
-
+Track Order Flowchart
 ![laundry database](https://github.com/user-attachments/assets/67de73f0-490b-48b7-be79-8420eb016c25)
+
+Place Order Flowchart
+![Cust](https://github.com/user-attachments/assets/b39054f7-f35b-4f0d-8f5e-72e836b3bcd6)
+
 
 The database schema for the laundry service system is designed to efficiently track customer orders, payments, packages, and couriers. The customers table serves as the central entity, linking to the orders table, which tracks the details of each order, including the selected package and its status. Each order is linked to a payment record, ensuring that payment details are associated with specific orders. The packages table defines the available laundry services, while the couriers table manages the delivery personnel, with each order being assigned a courier for delivery. This one-to-many relationship structure ensures seamless tracking of customers, their orders, payments, and deliveries, streamlining the operational workflow of the laundry service.
 
 
 
 Use Case Diagrams/Flowcharts: Illustrate the main user flows, such as "selecting a book," "borrowing a book," and "returning a book." This visually demonstrates the business logic.
+
+![Order](https://github.com/user-attachments/assets/fcf680e1-cb26-4aba-8f86-1c8b12edafc3)
 
 Data Validation: Describe the validation rules implemented on both the frontend (e.g., checking for empty fields) and backend (e.g., ensuring an email is unique).
