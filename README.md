@@ -66,10 +66,12 @@ The database schema for the laundry service system is designed to efficiently tr
 
 Use Case Diagrams/Flowcharts: Illustrate the main user flows, such as "selecting a book," "borrowing a book," and "returning a book." This visually demonstrates the business logic.
 
-Place Order Flowchart
+Place Order Flowchart:
+
 ![Cust](https://github.com/user-attachments/assets/b39054f7-f35b-4f0d-8f5e-72e836b3bcd6)
 
-Track Order Flowchart
+Track Order Flowchart:
+
 ![Order](https://github.com/user-attachments/assets/fcf680e1-cb26-4aba-8f86-1c8b12edafc3)
 
 Data Validation: Describe the validation rules implemented on both the frontend (e.g., checking for empty fields) and backend (e.g., ensuring an email is unique).
